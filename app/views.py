@@ -108,8 +108,9 @@ def deposit(request):
         except:
             messages.error(request, "Invalid amount entered.")
             return redirect("deposit")
-
-    return render(request, "funds/deposit.html")
+    transaction = DepositTransaction.objects.filter(user = request.user)
+    print(transaction, 'transaction')
+    return render(request, "funds/deposit.html",{'transactions':transaction})
 
 
 @login_required(login_url="/")
