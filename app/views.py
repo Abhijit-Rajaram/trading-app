@@ -81,15 +81,18 @@ def logout_view(request):
 
 @login_required(login_url="/")
 def deposit(request):
+    print('inside (deposits)')
     if request.method == "POST":
+        print('inside (deposits)**********')
         amount = request.POST.get("amount")
-        
+        print('amount : ',amount)
         try:
             amount = Decimal(amount) 
             if amount <= 0:
+                print('Invalid deposit amount : ',amount)
                 messages.error(request, "Invalid deposit amount.")
                 return redirect("deposit")
-
+            print('Invalid deposit amount 2 : ',amount)
             with transaction.atomic():
                 profile, created = UserProfile.objects.get_or_create(user=request.user)
                 profile.balance += amount  
@@ -101,16 +104,17 @@ def deposit(request):
                     amount=amount,
                     transaction_type="DEPOSIT"
                 )
-
+            print('Successfully deposited : ',amount)
             messages.success(request, f"Successfully deposited ₹{amount}!")
             return redirect("deposit")
 
-        except:
+        except Exception as e:
+            print(e)
             messages.error(request, "Invalid amount entered.")
             return redirect("deposit")
-    transaction = DepositTransaction.objects.filter(user = request.user)
-    print(transaction, 'transaction')
-    return render(request, "funds/deposit.html",{'transactions':transaction})
+    transactions = DepositTransaction.objects.filter(user = request.user)
+    print(transactions, 'transaction')
+    return render(request, "funds/deposit.html",{'transactions':transactions})
 
 
 @login_required(login_url="/")
