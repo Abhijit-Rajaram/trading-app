@@ -246,7 +246,7 @@ def place_order(request):
                         executed_at=current_time
                     )
 
-                    return JsonResponse({"message": f"Market order executed at ₹{executed_price}!"})
+                    return JsonResponse({"error": f"Market order executed at ₹{executed_price}!"})
 
                 elif order_type.upper() == "LIMIT":
                     # Reserve balance for limit buy orders
@@ -264,17 +264,17 @@ def place_order(request):
                         price=price, status="PENDING", expiry=now().replace(hour=23, minute=59, second=59)
                     )
 
-                    return JsonResponse({"message": f"Limit order placed at ₹{price}. Waiting for execution."})
+                    return JsonResponse({"error": f"Limit order placed at ₹{price}. Waiting for execution."})
 
                 else:
-                    return JsonResponse({"message": "Invalid order type"}, status=400)
+                    return JsonResponse({"error": "Invalid order type"}, status=400)
 
         except Stock.DoesNotExist:
-            return JsonResponse({"message": "Stock not found"}, status=404)
+            return JsonResponse({"error": "Stock not found"}, status=404)
         except Exception as e:
-            return JsonResponse({"message": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
 
-    return JsonResponse({"message": "Invalid request"}, status=400)
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 @login_required(login_url="/")
 def order_list(request):
