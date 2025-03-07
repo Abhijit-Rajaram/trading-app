@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Deposit / Withdraw Funds</h2>
+    
+    <!-- Display User Balance -->
+    <div class="alert alert-info">
+        <strong>Current Balance: ₹{{ request.user.profile.balance }}</strong>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="amount">Enter Amount:</label>
+        <input type="number" name="amount" step="0.01" required class="form-control mb-3">
+        <button type="submit" formaction="{% url 'deposit' %}" class="btn btn-success">Deposit</button>
+        <button type="submit" formaction="{% url 'withdraw' %}" class="btn btn-danger">Withdraw</button>
+    </form>
+
+    <h3 class="mt-4">Transaction History</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in request.user.deposittransaction_set.all %}
+                <tr>
+                    <td>{{ transaction.get_transaction_type_display }}</td>
+                    <td>₹{{ transaction.amount }}</td>
+                    <td>{{ transaction.timestamp }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No transactions found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
