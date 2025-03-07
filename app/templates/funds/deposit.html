@@ -6,6 +6,7 @@
     
     <!-- Display User Balance -->
     <div class="alert alert-info">
+        <strong>Name: {{ request.user.username }}</strong><br>
         <strong>Current Balance: ₹{{ request.user.profile.balance }}</strong>
     </div>
 
